@@ -1,4 +1,9 @@
-﻿<meta charset="utf-8">
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#FAF7F0">
 <title>دعوة آل الصباغ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +28,8 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
+html,body{margin:0}
+img{max-width:100%}
 html{scroll-behavior:smooth;overflow-x:hidden}
 body{background:var(--cream);color:var(--text);font-family:var(--f-body);direction:rtl;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 body::before{content:"";position:fixed;inset:-40px;background:url(assets/arch.webp) center/cover;filter:blur(28px);opacity:.45;z-index:-1}
@@ -214,6 +221,8 @@ textarea.fld{resize:none;min-height:5rem}
 }
 </style>
 
+</head>
+<body>
 <div id="root"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
@@ -241,7 +250,7 @@ const CONFIG = {
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('قصر الشام الملكي المزة مواساة دمشق'),
   closingLines: ['بحضوركم يفيض الفرح في أرجائنا', 'وبطيب دعواتكم يزهر ميثاق عمرنا'],
   storageKey: 'wedding-rsvp-demo',
-  rsvpEndpoint: 'https://script.google.com/macros/s/AKfycbweCets309rdzkmhqG_EbIScHOFlbT6jiOrxkYxLHPdoxCU8VvFHDT0E6KDpIC3zac/exec'                // رابط Google Apps Script (/exec) لإرسال الردود إلى تلغرام. فارغ = تجريبي محلي
+  rsvpEndpoint: 'https://script.google.com/macros/s/AKfycbweCets309rdzkmhqG_EbIScHOFlbT6jiOrxkYxLHPdoxCU8VvFHDT0E6KDpIC3zac/exec'                  // رابط Google Apps Script (/exec) لإرسال الردود إلى تلغرام. فارغ = تجريبي محلي
 };
 const LIVE = !!CONFIG.rsvpEndpoint;
 const A = {
@@ -278,6 +287,7 @@ function Bg({ src, flip, pos }) {
 /* بتلات بيضاء ناعمة تسقط ببطء: قريبة كبيرة مموّهة، وبعيدة صغيرة */
 function Petals({ n = 14 }) {
   if (reduced) return null;
+  if (window.innerWidth < 600) n = Math.max(6, Math.round(n * 0.6));   // أخفّ على الهاتف
   const items = Array.from({ length: n }, (_, i) => {
     const near = i % 4 === 0;
     return {
@@ -639,3 +649,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 
 
 
+</body>
+</html>
