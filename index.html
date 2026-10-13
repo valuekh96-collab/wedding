@@ -207,6 +207,12 @@ textarea.fld{resize:none;min-height:5rem}
 .credit span{font-family:var(--f-ui);font-size:.8rem;font-weight:500;color:var(--gold-ink)}
 .credit img{display:block;width:calc(var(--w)*.2);max-width:96px;height:auto}
 .sign{font-family:var(--f-names);font-weight:700;font-size:1.45rem;color:var(--gold-ink);margin-top:.8rem}
+/* زر النغمة */
+.music{position:fixed;bottom:18px;left:calc(50% - var(--w)/2 + 14px);z-index:70;width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);background:rgba(255,253,248,.88);color:var(--text);display:grid;place-items:center;cursor:pointer;padding:0;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 6px 16px rgba(94,74,56,.2);transition:transform .3s cubic-bezier(.2,.7,.2,1);animation:rise 1.2s .4s both}
+.music:hover{transform:translateY(-2px)}
+.music:active{transform:scale(.93)}
+.music:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
 /* progress dots */
 .dots{position:fixed;top:50%;left:calc(50% - var(--w)/2 + 6px);transform:translateY(-50%);display:flex;flex-direction:column;gap:.1rem;z-index:30;animation:rise 1.2s both}
 .dots button{width:24px;height:24px;background:none;border:0;padding:0;display:grid;place-items:center;cursor:pointer}
@@ -249,6 +255,7 @@ const CONFIG = {
   address: 'المزة - مواساة - الطريق الواصل إلى أوتستراد المزة',   // يُخفى إن تُرك فارغًا
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('قصر الشام الملكي المزة مواساة دمشق'),
   closingLines: ['بحضوركم يفيض الفرح في أرجائنا', 'وبطيب دعواتكم يزهر ميثاق عمرنا'],
+  musicFile: '',                    // اختياري: مسار ملف موسيقى خاص (مثل 'assets/music.mp3'). فارغ = نغمة مولَّدة داخل الصفحة
   storageKey: 'wedding-rsvp-demo',
   rsvpEndpoint: 'https://script.google.com/macros/s/AKfycbweCets309rdzkmhqG_EbIScHOFlbT6jiOrxkYxLHPdoxCU8VvFHDT0E6KDpIC3zac/exec'                  // رابط Google Apps Script (/exec) لإرسال الردود إلى تلغرام. فارغ = تجريبي محلي
 };
@@ -275,6 +282,111 @@ const D = {
   line: ''
 };
 D.line = D.day + ' - ' + nf(wd.getDate()) + ' - ' + nf(wd.getMonth() + 1) + ' - ' + nf(wd.getFullYear());
+
+
+/* ============ النغمة: عزف هادئ مولَّد بالكود (لا ملفات ولا حقوق نشر) ============ */
+const Music = (function () {
+  const BPM = 64, EIGHTH = 60 / BPM / 2, VOL = 0.5;
+  /* دي ماجور: ري، سي مينور، صول، لا */
+  const CHORDS = [
+    { bass: 38, arp: [62, 66, 69, 74], pad: [50, 57, 62, 66] },
+    { bass: 35, arp: [59, 62, 66, 71], pad: [47, 54, 59, 62] },
+    { bass: 43, arp: [59, 62, 67, 71], pad: [43, 50, 55, 59] },
+    { bass: 45, arp: [61, 64, 69, 73], pad: [45, 52, 57, 61] }
+  ];
+  const PATTERN = [0, 1, 2, 3, 2, 1, 2, 3];
+  let ctx = null, master = null, dry = null, wet = null, timer = null, audio = null;
+  let on = false, started = false, step = 0, nextT = 0;
+
+  const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+
+  function impulse(c, sec) {
+    const len = Math.floor(c.sampleRate * sec), buf = c.createBuffer(2, len, c.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6);
+    }
+    return buf;
+  }
+
+  function tone(freq, t, dur, peak, type, attack) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(peak, t + attack);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(dry); g.connect(wet);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+
+  function schedule(i, t) {
+    const bar = Math.floor(i / 8) % CHORDS.length, pos = i % 8, ch = CHORDS[bar];
+    if (pos === 0) {
+      tone(hz(ch.bass), t, EIGHTH * 8.5, 0.16, 'sine', 0.04);                       // قاع هادئ
+      ch.pad.forEach((m) => tone(hz(m), t, EIGHTH * 8.5, 0.035, 'sine', 1.1));     // طبقة ناعمة
+    }
+    const n = ch.arp[PATTERN[pos]];
+    tone(hz(n), t, 1.9, 0.11, 'triangle', 0.006);                                    // نغمة عود/صندوق موسيقى
+    tone(hz(n + 12), t, 0.9, 0.025, 'sine', 0.004);
+    if (pos === 4 && bar % 2 === 1) tone(hz(ch.arp[3] + 12), t + EIGHTH * 0.5, 2.4, 0.05, 'sine', 0.01);   // لمسة عالية أحيانًا
+  }
+
+  function tick() {
+    while (nextT < ctx.currentTime + 0.7) { schedule(step, nextT); nextT += EIGHTH; step++; }
+  }
+
+  function build() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    ctx = new AC();
+    master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+    dry = ctx.createGain(); dry.gain.value = 0.8; dry.connect(master);
+    const conv = ctx.createConvolver(); conv.buffer = impulse(ctx, 3.2);
+    wet = ctx.createGain(); wet.gain.value = 0.55; wet.connect(conv); conv.connect(master);
+    return true;
+  }
+
+  function fade(to, sec) {
+    if (audio) { audio.volume = to; return; }
+    const t = ctx.currentTime;
+    master.gain.cancelScheduledValues(t);
+    master.gain.setValueAtTime(master.gain.value, t);
+    master.gain.linearRampToValueAtTime(to, t + sec);
+  }
+
+  function start() {                                 // يُستدعى من ضغطة المستخدم فقط
+    if (started) return on;
+    started = true; on = true;
+    if (CONFIG.musicFile) {
+      audio = new Audio(CONFIG.musicFile); audio.loop = true; audio.volume = 0.0;
+      audio.play().catch(function () {});
+      let v = 0; const iv = setInterval(function () { v = Math.min(0.5, v + 0.025); audio.volume = v; if (v >= 0.5) clearInterval(iv); }, 120);
+      return on;
+    }
+    if (!build()) { on = false; return on; }
+    ctx.resume();
+    nextT = ctx.currentTime + 0.15; step = 0;
+    timer = setInterval(tick, 180);
+    fade(VOL, 3.5);
+    return on;
+  }
+
+  function toggle() {
+    if (!started) return start();
+    on = !on;
+    if (audio) { on ? audio.play().catch(function () {}) : audio.pause(); return on; }
+    if (on) { ctx.resume(); fade(VOL, 1.2); } else { fade(0, 0.5); }
+    return on;
+  }
+
+  document.addEventListener('visibilitychange', function () {   // يصمت عند مغادرة الصفحة
+    if (!started) return;
+    if (audio) { if (document.hidden) audio.pause(); else if (on) audio.play().catch(function () {}); return; }
+    if (document.hidden) ctx.suspend(); else if (on) ctx.resume();
+  });
+
+  return { start: start, toggle: toggle, isOn: function () { return on; } };
+})();
 
 function Bg({ src, flip, pos }) {
   return (
@@ -519,135 +631,4 @@ function Rsvp() {
             <div className="choices rv obs" role="radiogroup" aria-label="حالة الحضور">
               <label className={'choice' + (attend === 'yes' ? ' on' : '')}>
                 <input type="radio" name="attend" id="att-yes" checked={attend === 'yes'} onChange={() => setAttend('yes')} />سأحضر
-              </label>
-              <label className={'choice' + (attend === 'no' ? ' on' : '')}>
-                <input type="radio" name="attend" id="att-no" checked={attend === 'no'} onChange={() => setAttend('no')} />أعتذر عن الحضور
-              </label>
-            </div>
-            <div className="rv obs"><textarea id="guest-msg" className="fld" placeholder="رسالة تهنئة (اختياري)" value={msg} onChange={(e) => setMsg(e.target.value)} /></div>
-            <div className="rv obs" style={{ display: 'flex', justifyContent: 'center' }}><button className="btn" id="rsvp-submit" type="submit" disabled={busy}>{busy ? 'جارٍ الإرسال…' : 'تأكيد الحضور'}</button></div>
-            {fail && <div className="msg-e">تعذّر الإرسال. تأكد من اتصالك بالإنترنت وحاول مرة أخرى.</div>}
-            {!LIVE && <div className="note rv obs">نسخة تجريبية: يُحفظ الرد على هذا الجهاز فقط.</div>}
-          </form>
-        )}
-      </div>
-    </section>
-  );
-}
-
-/* سطران متناسقان بتوسيط هادئ */
-function FitLines({ lines }) {
-  return (
-    <div className="q obs soft">
-      {lines.map((t, i) => <div key={i} className="ln" style={{ '--d': (0.6 + i * 0.9) + 's' }}>{t}</div>)}
-    </div>
-  );
-}
-function Closing() {
-  return (
-    <section className="scene closing" id="closing">
-      <Bg src={A.sunset} flip />
-      <div className="veil2" />
-      <Petals n={16} />
-      <div className="col">
-        <div className="pearls rv obs"><i /><i /><i /></div>
-        <FitLines lines={CONFIG.closingLines} />
-        <div className="sign soft rv obs" data-d="2.2">عائلة {CONFIG.family}</div>
-      </div>
-      <div className="credit rv obs" data-d="3">
-        <span>تصميم وتنفيذ</span>
-        <img src="assets/studio.png" alt="Value Studio" />
-      </div>
-    </section>
-  );
-}
-
-function Dots({ active }) {
-  return (
-    <nav className="dots" aria-label="مراحل الدعوة">
-      {SECTIONS.map((s, i) => (
-        <button key={s.id} className={i === active ? 'on' : ''} aria-label={s.label} aria-current={i === active ? 'true' : undefined}
-                onClick={() => document.getElementById(s.id).scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })}>
-          <span />
-        </button>
-      ))}
-    </nav>
-  );
-}
-
-function App() {
-  const [phase, setPhase] = useState('closed'); // closed → opening → leaving → done
-  const [active, setActive] = useState(0);
-  const open = () => {
-    setPhase('opening');
-    setTimeout(() => setPhase('leaving'), reduced ? 400 : 3400);
-    setTimeout(() => setPhase('done'), reduced ? 700 : 5200);
-  };
-  useEffect(() => {
-    document.documentElement.style.overflowY = phase === 'done' ? '' : 'hidden';
-    if (phase === 'done') window.scrollTo(0, 0);
-  }, [phase]);
-
-  useEffect(() => {
-    const els = document.querySelectorAll('.obs');
-    if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); return; }
-    /* العناصر التي تدخل الشاشة معًا تظهر تباعًا بحسب ترتيبها من الأعلى */
-    const io = new IntersectionObserver((es) => {
-      es.filter((e) => e.isIntersecting)
-        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left)
-        .forEach((e, i) => {
-          const extra = parseFloat(e.target.dataset.d || '0');
-          e.target.style.setProperty('--d', (reduced ? 0 : i * 0.55 + extra).toFixed(2) + 's');
-          e.target.classList.add('in');
-          io.unobserve(e.target);
-        });
-    }, { threshold: 0.2 });
-    els.forEach((e) => io.observe(e));
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    let raf = 0;
-    const tick = () => {
-      raf = 0;
-      const vh = window.innerHeight;
-      let cur = 0;
-      SECTIONS.forEach((s, i) => { const el = document.getElementById(s.id); if (el && el.getBoundingClientRect().top <= vh * 0.5) cur = i; });
-      setActive(cur);
-      if (reduced) return;
-      document.querySelectorAll('.scene > .bg').forEach((b) => {
-        const r = b.parentElement.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > vh) return;
-        const off = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / vh)) * r.height * -0.035;
-        b.style.transform = 'translate3d(0,' + off.toFixed(1) + 'px,0)';
-      });
-    };
-    const on = () => { if (!raf) raf = requestAnimationFrame(tick); };
-    window.addEventListener('scroll', on, { passive: true }); window.addEventListener('resize', on); tick();
-    return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); };
-  }, []);
-
-  const entered = phase === 'leaving' || phase === 'done';
-  return (
-    <div className={'app' + (entered ? ' go' : '')}>
-      {phase !== 'done' && <Intro phase={phase} onOpen={open} />}
-      <Hero />
-      <Countdown />
-      <Place />
-      <Rsvp />
-      <Closing />
-      {phase === 'done' && <Dots active={active} />}
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-</script>
-
-
-
-
-
-
-</body>
-</html>
+              </la
