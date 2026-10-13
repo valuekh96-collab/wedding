@@ -1,0 +1,641 @@
+﻿<meta charset="utf-8">
+<title>دعوة آل الصباغ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=El+Messiri:wght@400;500;600&family=Scheherazade+New:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: one mobile column of full-bleed photographic scenes that dissolve into each other over a single ivory ground.
+   Style system: one text colour, one button, one section-title size. Calligraphy (Ruqaa) is reserved for the family and couple names. */
+:root{
+  --ivory:#FAF7F0; --warm:#FFFDF8; --cream:#F2EADF;
+  --gold:#C4A477; --soft-gold:#D8C3A0; --gold-ink:#876A3C;
+  --text:#5E4A38;                 /* النص الأساسي: درجة واحدة */
+  --btn:#5E4A38;                  /* الزر الأساسي: درجة واحدة */
+  --brown:var(--text); --ink:var(--text);
+  --h2:1.75rem;                      /* عنوان القسم: حجم واحد */
+  --btn-h:3.4rem; --btn-r:999px;
+  --btn-shadow:0 8px 22px rgba(94,74,56,.26);
+  --f-body:'Scheherazade New','Traditional Arabic',serif;
+  --f-head:'El Messiri','Scheherazade New',serif;
+  --f-ui:'IBM Plex Sans Arabic','Segoe UI',system-ui,sans-serif;
+  --f-names:'Aref Ruqaa','Scheherazade New',serif;
+  --paper:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .36  0 0 0 0 .27  0 0 0 .16 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--cream);color:var(--text);font-family:var(--f-body);direction:rtl;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:-40px;background:url(assets/arch.webp) center/cover;filter:blur(28px);opacity:.45;z-index:-1}
+button,input,textarea{font:inherit;color:inherit}
+h2{margin:0;font-family:var(--f-head);font-weight:600;font-size:var(--h2);line-height:1.4;color:var(--text);text-wrap:balance}
+.app{--w:min(100vw,480px);width:var(--w);margin:0 auto;position:relative;background:var(--ivory);box-shadow:0 0 80px rgba(94,74,56,.18);overflow:hidden}
+
+/* scenes */
+.scene{position:relative;min-height:max(100svh,calc(var(--w)*1.7778));overflow:hidden;isolation:isolate;display:flex;flex-direction:column;align-items:center}
+.bg{position:absolute;inset:-4% 0;z-index:-2;will-change:transform}
+.bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transform-origin:50% 100%;animation:breathe 28s ease-in-out infinite alternate}
+@keyframes breathe{from{scale:1}to{scale:1.035}}
+.bg.flip img{transform:scaleX(-1)}
+.scene + .scene{margin-top:calc(var(--w)*-.2)}
+.scene > .bg{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 11%,#000 89%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 11%,#000 89%,transparent 100%)}
+.hero > .bg{-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 89%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 89%,transparent 100%)}
+.closing > .bg{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 11%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 11%,#000 100%)}
+.eyebrow{font-family:var(--f-ui);font-weight:500;font-size:.95rem;color:var(--gold-ink);display:flex;align-items:center;gap:.9rem;justify-content:center}
+.eyebrow::before,.eyebrow::after{content:"";width:2.2rem;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.eyebrow::after{transform:scaleX(-1)}
+.eyebrow.sm{font-size:.8rem}
+.pearls{display:flex;gap:.45rem;justify-content:center;align-items:center}
+.pearls i{display:block;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#eadfcb 60%,#cdb890);box-shadow:0 1px 2px rgba(94,74,56,.35)}
+.pearls i:nth-child(2){width:9px;height:9px}
+.soft{text-shadow:0 0 18px rgba(255,253,248,.95),0 0 6px rgba(255,253,248,.8)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(16px);filter:blur(5px);transition:opacity 1.4s ease var(--d,0s),transform 1.6s cubic-bezier(.2,.7,.2,1) var(--d,0s),filter 1.4s ease var(--d,0s)}
+.rv.in{opacity:1;transform:none;filter:none}
+.quote .w{display:inline-block;opacity:0;filter:blur(7px);transform:translateY(8px);transition:opacity 1.6s ease var(--d),filter 1.6s ease var(--d),transform 1.6s ease var(--d)}
+.quote.in .w{opacity:1;filter:none;transform:none}
+
+/* buttons: نفس الارتفاع والاستدارة والظل واللون */
+.btn{position:relative;font-family:var(--f-ui);font-weight:500;font-size:1.05rem;padding:0 2.2rem;height:var(--btn-h);border-radius:var(--btn-r);border:1px solid var(--gold);background:var(--btn);color:var(--warm);cursor:pointer;overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.2,1);box-shadow:var(--btn-shadow),inset 0 0 0 3px rgba(250,247,240,.12);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.6rem;white-space:nowrap}
+.btn::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,253,248,.3),transparent);transform:skewX(-18deg);animation:sheen 6s ease-in-out infinite}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.choice:focus-within,.fld:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+@keyframes sheen{0%,60%{left:-60%}100%{left:130%}}
+
+/* intro */
+.intro{position:fixed;top:0;left:50%;width:min(100vw,480px);height:100svh;transform:translateX(-50%);z-index:50;overflow:hidden;background:var(--ivory);transition:opacity 1.6s ease,filter 1.6s ease;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.4rem;padding-bottom:9svh}
+.intro > :not(.bgwrap):not(.petals){position:relative;z-index:2}
+.intro.leave{opacity:0;filter:blur(8px);pointer-events:none}
+.intro .bgwrap{position:absolute;inset:0;z-index:-1;transition:transform 2s cubic-bezier(.3,.6,.2,1)}
+.intro.leave .bgwrap{transform:scale(1.2)}
+.intro .bgwrap::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,rgba(255,253,248,.6),rgba(255,253,248,0) 66%),linear-gradient(to top,rgba(250,247,240,.78) 0,rgba(250,247,240,.35) 26%,rgba(250,247,240,0) 48%)}
+.intro-t{text-align:center;display:flex;flex-direction:column;gap:.9rem;align-items:center;animation:rise 1.5s .3s both}
+.envwrap{position:relative;width:300px;height:318px;display:flex;align-items:flex-end;justify-content:center;animation:rise 1.7s .6s both}
+.envwrap::after{content:"";position:absolute;left:50%;bottom:-16px;width:300px;height:26px;margin-left:-150px;background:radial-gradient(ellipse at center,rgba(94,74,56,.26),rgba(94,74,56,0) 70%);filter:blur(5px);z-index:-1}
+.env{position:relative;width:264px;height:176px;perspective:900px;transform:scale(1.14);transform-origin:50% 100%;filter:drop-shadow(0 10px 14px rgba(94,74,56,.16))}
+.env .back{position:absolute;inset:0;background:#E9DCC6;border-radius:6px}
+.env .back,.env .card{background-image:var(--paper)}
+.env .back{background-color:#E9DCC6}
+.env .tex{position:absolute;inset:0;z-index:2;background:var(--paper);pointer-events:none;border-radius:6px;opacity:.9}
+.env .card{position:absolute;left:14px;right:14px;top:12px;height:216px;background-color:#FFFCF4;border:1px solid var(--soft-gold);border-radius:3px;z-index:1;padding:.95rem .5rem .6rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.28rem;clip-path:inset(0 0 52px 0);transition:transform 1.6s cubic-bezier(.3,.7,.2,1) 1s,clip-path 1.6s ease 1s;box-shadow:0 0 0 4px #FFFCF4 inset,0 0 0 5px rgba(196,164,119,.38) inset,0 -3px 12px rgba(94,74,56,.10)}
+.env .card small{font-family:var(--f-ui);font-size:.78rem;font-weight:500;color:var(--gold-ink);margin-top:.1rem}
+.env .card b{font-family:var(--f-names);font-weight:700;font-size:1.7rem;color:var(--text);line-height:1.15}
+.env .card .and{display:flex;align-items:center;gap:.5rem;color:var(--gold-ink);font-family:var(--f-body);font-size:1.05rem;line-height:1}
+.env .card .and::before,.env .card .and::after{content:"";width:1.4rem;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.env .card .and::after{transform:scaleX(-1)}
+.env.open .card{transform:translateY(-100px);clip-path:inset(0)}
+.env svg.pocket{position:absolute;inset:0;z-index:2;width:100%;height:100%}
+.env .flap{position:absolute;left:0;top:0;width:100%;height:100px;transform-origin:50% 0;z-index:3;transition:transform 1.2s cubic-bezier(.5,0,.2,1),z-index 0s .6s;transform-style:preserve-3d}
+.env .flap svg{width:100%;height:100%;display:block}
+.env.open .flap{transform:rotateX(180deg);z-index:0}
+.seal{position:absolute;left:50%;top:72px;width:54px;height:54px;margin-left:-27px;z-index:4;border-radius:50%;background:radial-gradient(circle at 34% 28%,#F8E7BE 0%,#DDBE84 42%,#B88F52 100%);border:1px solid #A27C44;box-shadow:0 6px 10px rgba(92,62,24,.38),inset 0 2px 3px rgba(255,248,225,.75),inset 0 -3px 5px rgba(120,84,36,.45);display:grid;place-items:center;transition:opacity .6s,transform .8s}
+.seal::before{content:"";position:absolute;inset:5px;border-radius:50%;border:1px solid rgba(255,246,220,.6);box-shadow:inset 0 1px 2px rgba(120,84,36,.4),0 1px 0 rgba(255,248,225,.5)}
+.seal svg{filter:drop-shadow(0 1px 0 rgba(110,76,30,.6)) drop-shadow(0 -1px 0 rgba(255,248,225,.55))}
+.env.open .seal{opacity:0;transform:scale(.6)}
+.introbtn{height:var(--btn-h);display:flex;align-items:center;justify-content:center}
+.introbtn .btn{animation:rise 1.4s 1.2s both}
+.introbtn .btn.show{animation:none;opacity:0;transition:opacity 1.2s ease,transform .35s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.introbtn .btn.show.on{opacity:1;pointer-events:auto}
+
+/* hero */
+.hero{justify-content:flex-start;padding:calc(var(--w)*.1) 6% 17rem;text-align:center}
+.basmala{display:block;width:80%;max-width:300px;height:auto;filter:drop-shadow(0 0 8px rgba(255,253,248,.95)) drop-shadow(0 0 2px rgba(255,253,248,.9))}
+.hero .veil{position:absolute;z-index:-1;left:6%;right:0;top:6%;height:78%;background:radial-gradient(ellipse at 50% 46%,rgba(255,253,248,.86),rgba(255,253,248,0) 72%);pointer-events:none}
+.hero .col{display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;flex:1;gap:1rem;width:100%}
+.fathers{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;justify-items:center;width:100%;column-gap:.4rem}
+.fa{display:flex;flex-direction:column;align-items:center;gap:.1rem;min-width:0}
+.fa small{font-family:var(--f-names);font-size:calc(var(--w)*.05);color:var(--gold-ink);line-height:1.2}
+.fa b{font-family:var(--f-names);font-weight:700;font-size:calc(var(--w)*.058);color:var(--text);line-height:1.4;white-space:nowrap}
+.fsep{width:1px;height:2.8rem;background:linear-gradient(transparent,var(--gold),transparent)}
+.hero .lede{font-family:var(--f-names);font-size:calc(var(--w)*.051);font-weight:700;margin:0;white-space:nowrap;color:var(--text)}
+.hero .ttl{font-family:var(--f-names);font-size:calc(var(--w)*.05);color:var(--gold-ink);margin:.4rem 0 -.7rem;margin-left:6%}
+.names{font-family:var(--f-names);color:var(--text);display:flex;flex-direction:row;align-items:baseline;justify-content:center;gap:.35em;line-height:1.1;margin-left:6%}
+.names .n{font-size:calc(var(--w)*.135);font-weight:700}
+.names .amp{font-family:var(--f-body);font-size:calc(var(--w)*.07);color:var(--gold-ink);font-style:italic}
+.hero .cta{margin-top:1.2rem}
+.a{opacity:0}
+.go .hero .a{animation:rise 1.7s cubic-bezier(.2,.7,.2,1) var(--d,0s) both}
+@keyframes rise{from{opacity:0;transform:translateY(20px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+.hero .scroll{position:absolute;bottom:1.2rem;left:50%;width:1px;height:42px;background:linear-gradient(var(--gold),transparent);animation:drip 2.6s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* countdown inside the arch niche */
+.count{justify-content:space-evenly;padding:calc(var(--w)*.2) 15% calc(var(--w)*.58) 12%;text-align:center;gap:0}
+.count .head{display:flex;flex-direction:column;gap:.7rem}
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;width:100%;user-select:none;-webkit-user-select:none;pointer-events:none}
+.cd-i{display:flex;flex-direction:column;align-items:center;gap:.5rem;outline:none}
+.ring{position:relative;aspect-ratio:1;width:100%}
+.ring svg{width:100%;height:100%;display:block;overflow:visible;outline:none}
+.ring .trk{fill:rgba(255,253,248,.55);stroke:var(--soft-gold);stroke-opacity:.6;stroke-width:2}
+.ring .prg{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round}
+.ring .pearl{fill:#fff;stroke:var(--gold);stroke-width:1}
+.rn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.rn .num{font-family:var(--f-head);font-weight:600;font-size:1.75rem;line-height:1;font-variant-numeric:tabular-nums;color:var(--text);display:block;overflow:hidden;height:2rem}
+.tick{display:block;animation:tick .8s cubic-bezier(.2,.8,.2,1)}
+@keyframes tick{from{transform:translateY(-60%);opacity:0}to{transform:none;opacity:1}}
+.cd-i small{font-family:var(--f-ui);font-size:1rem;font-weight:500;color:var(--gold-ink)}
+.when{display:flex;flex-direction:column;align-items:center;gap:1.4rem;width:100%}
+.when .dline{font-family:var(--f-head);font-weight:600;font-size:1.65rem;color:var(--text);line-height:1.5}
+.when .tline{font-family:var(--f-ui);font-size:1rem;color:var(--text)}
+
+/* place (القاعة والموقع والمواعيد) */
+.place{justify-content:flex-start;padding:7rem 8% 7rem;gap:2.2rem;text-align:center}
+.place::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 50% 72%,rgba(255,253,248,.92),transparent 74%),radial-gradient(ellipse at 50% 62%,rgba(255,253,248,.78),transparent 70%),radial-gradient(ellipse at 20% 10%,rgba(255,253,248,.9),transparent 55%),radial-gradient(ellipse at 90% 90%,rgba(216,195,160,.28),transparent 55%);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 11%,#000 89%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 11%,#000 89%,transparent 100%)}
+.frame{position:relative;padding:10px;border-radius:999px 999px 20px 20px;border:1px solid var(--gold);width:74%;display:flex;justify-content:center}
+.window{position:relative;width:100%;aspect-ratio:3/4.1;border-radius:999px 999px 14px 14px;overflow:hidden;box-shadow:0 22px 44px rgba(94,74,56,.22)}
+.window .ph{position:absolute;inset:0;background:url(assets/hall2.webp) 50% 60%/cover no-repeat;transform:scale(1.02);transition:transform 7s cubic-bezier(.2,.6,.2,1)}
+.frame.in .ph{transform:scale(1.16)}
+.window::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,253,248,.7)}
+.place .where{display:flex;flex-direction:column;gap:.7rem;align-items:center}
+.place .where{gap:.4rem}
+.place .where p{margin:0;font-size:1.2rem;line-height:1.9;color:var(--text)}
+.addr1{margin:0;white-space:nowrap;font-size:calc(var(--w)*.034);font-weight:700;color:var(--text);line-height:1.9}
+.sess{display:grid;grid-template-columns:1fr 1px 1fr;gap:1rem;width:100%;max-width:19rem;align-items:center}
+.sess .vr{height:100%;min-height:3.4rem;background:linear-gradient(transparent,var(--gold),transparent)}
+.sess small{display:block;font-family:var(--f-ui);font-size:1.05rem;font-weight:500;color:var(--gold-ink);margin-bottom:.3rem}
+.sess b{display:block;font-family:var(--f-head);font-weight:600;font-size:1.5rem;line-height:1.4;color:var(--text)}
+.sess span{font-family:var(--f-ui);font-size:1rem;color:var(--text)}
+.when .sess{margin-top:.2rem;max-width:none;width:100%;gap:1.4rem}
+.petals{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1;container-type:size}
+.scene > :not(.bg):not(.petals):not(.veil):not(.veil2):not(.scroll){position:relative;z-index:2}
+.pt{position:absolute;top:0;width:var(--sz);height:calc(var(--sz)*1.45);animation:fall var(--t) linear var(--dl) infinite;will-change:transform}
+.pt i{display:block;width:100%;height:100%;border-radius:62% 38% 60% 40% / 70% 62% 38% 30%;background:radial-gradient(ellipse at 32% 28%,#FFFFFF 0%,#FFFDF8 42%,#F1E6D3 100%);box-shadow:0 1px 4px rgba(94,74,56,.28),inset -1px -2px 3px rgba(216,195,160,.45);animation:sway var(--sw) ease-in-out infinite alternate}
+@keyframes fall{0%{transform:translate3d(0,-12cqh,0)}100%{transform:translate3d(var(--dx),112cqh,0)}}
+@keyframes sway{0%{transform:rotate(-35deg) rotateY(0deg) translateX(-8px)}100%{transform:rotate(40deg) rotateY(70deg) translateX(10px)}}
+
+/* rsvp */
+.rsvp{justify-content:flex-start;padding:calc(var(--w)*.22) 13% 4rem;text-align:center}
+.rsvp .panel{width:100%;display:flex;flex-direction:column;gap:1.1rem;align-items:stretch;padding:1.6rem 1.1rem 1.4rem;border-radius:22px;background:rgba(255,253,248,.84);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);box-shadow:0 0 0 1px rgba(196,164,119,.35)}
+.rsvp form{display:flex;flex-direction:column;gap:1.1rem}
+.rsvp .hd{display:flex;flex-direction:column;gap:.6rem}
+.fld{width:100%;background:rgba(255,253,248,.92);border:1px solid var(--soft-gold);border-radius:14px;padding:.8rem 1rem;font-family:var(--f-ui);font-size:1rem;min-height:3.2rem;transition:border-color .3s,box-shadow .3s;outline:none;text-align:right}
+.fld:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(196,164,119,.22)}
+.fld::placeholder{color:#85735C}
+.fld.err{border-color:#b5624a;animation:shake .4s}
+@keyframes shake{25%{transform:translateX(5px)}75%{transform:translateX(-5px)}}
+textarea.fld{resize:none;min-height:5rem}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.choice{position:relative;border:1px solid var(--soft-gold);border-radius:14px;background:rgba(255,253,248,.92);padding:.75rem .4rem;cursor:pointer;font-family:var(--f-ui);font-size:.95rem;min-height:3.2rem;display:flex;align-items:center;justify-content:center;transition:all .35s cubic-bezier(.2,.7,.2,1);user-select:none}
+.choice input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.choice.on{background:var(--btn);color:var(--warm);border-color:var(--gold);transform:translateY(-2px);box-shadow:var(--btn-shadow)}
+.msg-e{font-family:var(--f-ui);font-size:.85rem;color:#9a4f3b;margin-top:-.5rem;text-align:right}
+.rsvp .note{font-family:var(--f-ui);font-size:.8rem;color:var(--text);line-height:1.7}
+.done{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:.8rem .2rem;animation:rise 1.2s both}
+.done .seal2{width:72px;height:72px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#efe5d2 60%,#d8c3a0);border:1px solid var(--gold);display:grid;place-items:center;box-shadow:0 8px 20px rgba(94,74,56,.22)}
+.done svg path{stroke:var(--text);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40;animation:draw .9s .3s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.done p{margin:0;font-size:1.2rem;line-height:1.9;color:var(--text)}
+.linkbtn{background:none;border:0;font-family:var(--f-ui);font-size:.9rem;color:var(--text);text-decoration:underline;text-underline-offset:4px;cursor:pointer;min-height:2.8rem}
+
+/* closing */
+/* الخاتمة: النص داخل المنطقة الفارغة من الصورة (بعيدًا عن الستارة والورود يمين الشاشة) */
+.closing{justify-content:flex-start;height:100svh;min-height:100svh;padding:0;text-align:center}
+.closing .col{width:64%;align-self:flex-end;margin-left:8%;margin-top:calc(100svh*.2);display:flex;flex-direction:column;align-items:center;gap:1.5rem}
+.closing .veil2{position:absolute;z-index:-1;left:0;width:80%;top:8%;height:58%;background:radial-gradient(ellipse at 52% 48%,rgba(255,253,248,.82),rgba(255,253,248,0) 72%)}
+.q{width:100%;display:flex;flex-direction:column;align-items:center;gap:.5rem;font-family:var(--f-body);font-weight:700;color:var(--text);text-align:center}
+.q .ln{white-space:nowrap;line-height:1.9;font-size:calc(var(--w)*.044);opacity:0;filter:blur(6px);transform:translateY(8px);transition:opacity 1.8s ease var(--d),filter 1.8s ease var(--d),transform 1.8s ease var(--d)}
+.q.in .ln{opacity:1;filter:none;transform:none}
+.credit{margin-top:auto;align-self:center;margin-bottom:1.6rem;display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.6rem 1.4rem;border-radius:18px;background:radial-gradient(ellipse at center,rgba(255,253,248,.85),rgba(255,253,248,0) 75%)}
+.credit span{font-family:var(--f-ui);font-size:.8rem;font-weight:500;color:var(--gold-ink)}
+.credit img{display:block;width:calc(var(--w)*.2);max-width:96px;height:auto}
+.sign{font-family:var(--f-names);font-weight:700;font-size:1.45rem;color:var(--gold-ink);margin-top:.8rem}
+/* progress dots */
+.dots{position:fixed;top:50%;left:calc(50% - var(--w)/2 + 6px);transform:translateY(-50%);display:flex;flex-direction:column;gap:.1rem;z-index:30;animation:rise 1.2s both}
+.dots button{width:24px;height:24px;background:none;border:0;padding:0;display:grid;place-items:center;cursor:pointer}
+.dots span{display:block;width:7px;height:7px;border-radius:999px;border:1px solid var(--gold);background:rgba(255,253,248,.85);transition:height .5s cubic-bezier(.2,.7,.2,1),background .5s;box-shadow:0 0 4px rgba(94,74,56,.2)}
+.dots button.on span{height:20px;background:var(--gold)}
+.dots button:focus-visible{outline:2px solid var(--gold);border-radius:6px}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .rv,.a,.quote .w{opacity:1!important;transform:none!important;filter:none!important}
+}
+</style>
+
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+/* ============ الإعدادات المركزية: عدّل البيانات من هنا فقط ============ */
+const CONFIG = {
+  family: 'الصباغ',
+  groom: 'محمد',
+  bride: 'كريمته',                  // بطلب من العائلة لا يُذكر اسم العروس
+  groomFather: { title: 'الحاج', name: 'هيثم الصباغ' },   // والد العريس (يمين الشاشة)
+  brideFather: { title: 'الحاج', name: 'علي الصباغ' },    // والد العروس (يسار الشاشة)
+  dateISO: '2026-11-13T19:00:00',   // موعد الزفاف (توقيت الجهاز)
+  timeLabel: '٧:٠٠ مساءً',
+  sessions: [
+    { who: 'حفل الرجال', from: '٧:٠٠', to: '١٠:٠٠' },
+    { who: 'حفل النساء', from: '٧:٠٠', to: '١١:٠٠' }
+  ],
+  hall: 'قصر الشام الملكي',
+  address: 'المزة - مواساة - الطريق الواصل إلى أوتستراد المزة',   // يُخفى إن تُرك فارغًا
+  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('قصر الشام الملكي المزة مواساة دمشق'),
+  closingLines: ['بحضوركم يفيض الفرح في أرجائنا', 'وبطيب دعواتكم يزهر ميثاق عمرنا'],
+  storageKey: 'wedding-rsvp-demo',
+  rsvpEndpoint: 'https://script.google.com/macros/s/AKfycbweCets309rdzkmhqG_EbIScHOFlbT6jiOrxkYxLHPdoxCU8VvFHDT0E6KDpIC3zac/exec'                // رابط Google Apps Script (/exec) لإرسال الردود إلى تلغرام. فارغ = تجريبي محلي
+};
+const LIVE = !!CONFIG.rsvpEndpoint;
+const A = {
+  arch: { img: 'assets/arch.webp' },
+  table: { img: 'assets/table.webp' },
+  sunset: { img: 'assets/sunset.webp' }
+};
+const SECTIONS = [
+  { id: 'home', label: 'الدعوة' },
+  { id: 'countdown', label: 'العد التنازلي' },
+  { id: 'place', label: 'الموقع' },
+  { id: 'rsvp', label: 'تأكيد الحضور' },
+  { id: 'closing', label: 'الختام' }
+];
+/* ====================================================================== */
+
+const reduced = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const nf = (n, pad) => new Intl.NumberFormat('ar-EG', { useGrouping: false, minimumIntegerDigits: pad || 1 }).format(n);
+const wd = new Date(CONFIG.dateISO);
+const D = {
+  day: wd.toLocaleDateString('ar-EG', { weekday: 'long' }),
+  line: ''
+};
+D.line = D.day + ' - ' + nf(wd.getDate()) + ' - ' + nf(wd.getMonth() + 1) + ' - ' + nf(wd.getFullYear());
+
+function Bg({ src, flip, pos }) {
+  return (
+    <div className={'bg' + (flip ? ' flip' : '')}>
+      <img src={src.img} alt="" style={pos ? { objectPosition: pos } : null} />
+    </div>
+  );
+}
+
+/* بتلات بيضاء ناعمة تسقط ببطء: قريبة كبيرة مموّهة، وبعيدة صغيرة */
+function Petals({ n = 14 }) {
+  if (reduced) return null;
+  const items = Array.from({ length: n }, (_, i) => {
+    const near = i % 4 === 0;
+    return {
+      left: (i * 29 + 7) % 94,
+      size: near ? 22 + (i * 5) % 8 : 11 + (i * 3) % 8,
+      t: near ? 24 + (i % 3) * 3 : 30 + (i * 5) % 12,
+      dl: -((i * 4.3) % 30),
+      dx: (i % 2 ? 1 : -1) * (40 + (i * 17) % 90),
+      sway: 4 + (i % 4) * .8,
+      blur: near ? 1.6 : (i % 3 === 0 ? .7 : 0),
+      op: near ? .8 : .95
+    };
+  });
+  return (
+    <div className="petals" aria-hidden="true">
+      {items.map((p, i) => (
+        <span key={i} className="pt" style={{ left: p.left + '%', '--t': p.t + 's', '--dl': p.dl + 's', '--dx': p.dx + 'px', '--sz': p.size + 'px', '--sw': p.sway + 's', opacity: p.op, filter: p.blur ? 'blur(' + p.blur + 'px)' : 'none' }}>
+          <i />
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function Rings({ size = 30, ink = '#876A3C', gem = '#FFFDF8' }) {
+  return (
+    <svg width={size} height={size * 0.68} viewBox="0 0 48 32" fill="none" aria-hidden="true">
+      <circle cx="17" cy="19" r="10" stroke={ink} strokeWidth="2.4" />
+      <circle cx="31" cy="19" r="10" stroke={ink} strokeWidth="2.4" />
+      <path d="M21 19A10 10 0 0 0 24 26.14" stroke={ink} strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M31 4.2l2.6 3.2-2.6 3-2.6-3z" fill={gem} stroke={ink} strokeWidth="1.2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function Intro({ phase, onOpen }) {
+  const opened = phase !== 'closed';
+  return (
+    <div className={'intro' + (phase === 'leaving' ? ' leave' : '')}>
+      <div className="bgwrap"><Bg src={A.table} /></div>
+      <Petals n={10} />
+      <div className="intro-t">
+        <div className="eyebrow sm">دعوة خاصة</div>
+        <h2 className="soft">إلى من نحب</h2>
+      </div>
+      <div className="envwrap" onClick={!opened ? onOpen : undefined} style={!opened ? { cursor: 'pointer' } : null}>
+        <div className={'env' + (opened ? ' open' : '')}>
+          <div className="back" />
+          <div className="card">
+            <Rings size={36} ink="#C4A477" />
+            <small>دعوة زفاف</small>
+            <b>{CONFIG.groom}</b>
+            <span className="and">و</span>
+            <b>{CONFIG.bride}</b>
+          </div>
+          <svg className="pocket" viewBox="0 0 264 176" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="gl" x1="0" x2="1"><stop offset="0" stopColor="#F4EBDA"/><stop offset="1" stopColor="#EADFC9"/></linearGradient>
+              <linearGradient id="gr" x1="1" x2="0"><stop offset="0" stopColor="#F4EBDA"/><stop offset="1" stopColor="#EADFC9"/></linearGradient>
+              <linearGradient id="gb" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stopColor="#FBF6EA"/><stop offset="1" stopColor="#EFE4CF"/></linearGradient>
+            </defs>
+            <polygon points="0,0 132,98 0,176" fill="url(#gl)" />
+            <polygon points="264,0 132,98 264,176" fill="url(#gr)" />
+            <polygon points="0,176 132,88 264,176" fill="url(#gb)" stroke="#D8C3A0" strokeWidth=".6" />
+          </svg>
+          <div className="tex" />
+          <div className="flap">
+            <svg viewBox="0 0 264 100" preserveAspectRatio="none">
+              <defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#FFFDF8"/><stop offset="1" stopColor="#EEE2CB"/></linearGradient></defs>
+              <polygon points="0,0 264,0 132,100" fill="url(#gf)" stroke="#D8C3A0" strokeWidth=".6" />
+            </svg>
+          </div>
+          <div className="seal"><Rings size={30} ink="#FFF3D6" gem="#FFF8E6" /></div>
+        </div>
+      </div>
+      <div className="introbtn">
+        {!opened && <button className="btn" id="open-invite" onClick={onOpen}>افتح الدعوة</button>}
+      </div>
+    </div>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="scene hero" id="home">
+      <Bg src={A.sunset} />
+      <Petals n={14} />
+      <div className="veil" />
+      <div className="col">
+        <img className="basmala a" style={{ '--d': '0s' }} src="assets/basmala.png" alt="بسم الله الرحمن الرحيم" />
+        <div className="fathers soft">
+          <div className="fa a" style={{ '--d': '.6s' }}><small>{CONFIG.groomFather.title}</small><b>{CONFIG.groomFather.name}</b></div>
+          <i className="fsep a" style={{ '--d': '.9s' }} />
+          <div className="fa a" style={{ '--d': '1.2s' }}><small>{CONFIG.brideFather.title}</small><b>{CONFIG.brideFather.name}</b></div>
+        </div>
+        <p className="lede soft a" style={{ '--d': '1.9s' }}>يتشرفان بدعوتكم لحضور حفل زفاف نجلهما</p>
+        <div className="names soft">
+          <span className="n a" style={{ '--d': '2.6s' }}>{CONFIG.groom}</span>
+          <span className="amp a" style={{ '--d': '3.1s' }}>و</span>
+          <span className="n a" style={{ '--d': '3.5s' }}>{CONFIG.bride}</span>
+        </div>
+      </div>
+      <span className="scroll" />
+    </section>
+  );
+}
+
+function Ring({ value, max, label }) {
+  const r = 46, c = 2 * Math.PI * r, p = Math.max(0, Math.min(1, value / max));
+  return (
+    <div className="cd-i">
+      <div className="ring">
+        <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+          <circle className="trk" cx="50" cy="50" r="46" />
+          <circle className="prg" cx="50" cy="50" r="46" transform="rotate(-90 50 50)" strokeDasharray={c} strokeDashoffset={c * (1 - p)} />
+          <circle className="pearl" cx="50" cy="4" r="3.4" />
+        </svg>
+        <div className="rn"><span className="num"><span key={value} className="tick">{nf(value, 2)}</span></span></div>
+      </div>
+      <small>{label}</small>
+    </div>
+  );
+}
+
+function Countdown() {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
+  const diff = Math.max(0, wd.getTime() - now);
+  const s = Math.floor(diff / 1000);
+  const days = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+  return (
+    <section className="scene count" id="countdown">
+      <Bg src={A.arch} />
+      <Petals n={12} />
+      <div className="head">
+        <div className="eyebrow rv obs">نعدّ الأيام</div>
+        <h2 className="soft rv obs">حتى ليلة العمر</h2>
+      </div>
+      <div className="cd rv obs">
+        <Ring value={days} max={365} label="يوم" />
+        <Ring value={h} max={24} label="ساعة" />
+        <Ring value={m} max={60} label="دقيقة" />
+        <Ring value={sec} max={60} label="ثانية" />
+      </div>
+      <div className="when soft">
+        <div className="pearls rv obs"><i /><i /><i /></div>
+        <div className="dline rv obs">{diff === 0 ? 'حان موعد الفرحة' : D.line}</div>
+        <div className="sess">
+          {CONFIG.sessions.map((s, i) => (
+            <React.Fragment key={i}>
+              {i > 0 && <div className="vr" />}
+              <div className="rv obs"><small>{s.who}</small><b>{s.from} – {s.to}</b><span>مساءً</span></div>
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Place() {
+  return (
+    <section className="scene place" id="place">
+      <Bg src={A.table} flip />
+      <Petals n={10} />
+      <div className="where soft">
+        <p className="lead rv obs">ستقام الحفلة في</p>
+        <h2 className="rv obs">{CONFIG.hall}</h2>
+      </div>
+      <div className="frame rv obs">
+        <div className="window"><div className="ph" /></div>
+      </div>
+      {CONFIG.address && <p className="addr1 soft rv obs">{CONFIG.address}</p>}
+      <a className="btn rv obs" id="maps" href={CONFIG.mapsUrl} target="_blank" rel="noopener noreferrer">افتح الموقع على Google Maps</a>
+    </section>
+  );
+}
+
+function Rsvp() {
+  const [name, setName] = useState('');
+  const [attend, setAttend] = useState('yes');
+  const [msg, setMsg] = useState('');
+  const [err, setErr] = useState(false);
+  const [sent, setSent] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [fail, setFail] = useState(false);
+  const submit = async (e) => {
+    e.preventDefault();
+    if (busy) return;
+    if (!name.trim()) { setErr(true); document.getElementById('guest-name').focus(); return; }
+    const rec = { id: Date.now(), name: name.trim(), attend, msg: msg.trim(), at: new Date().toISOString() };
+    setFail(false);
+    if (LIVE) {
+      setBusy(true);
+      try {
+        await fetch(CONFIG.rsvpEndpoint, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ name: rec.name, attend: rec.attend, msg: rec.msg }) });
+      } catch (_) { setBusy(false); setFail(true); return; }
+      setBusy(false);
+    }
+    try {
+      const list = JSON.parse(localStorage.getItem(CONFIG.storageKey) || '[]'); list.push(rec);
+      localStorage.setItem(CONFIG.storageKey, JSON.stringify(list));
+    } catch (_) {}
+    setSent(rec);
+  };
+  return (
+    <section className="scene rsvp" id="rsvp">
+      <Bg src={A.arch} flip />
+      <Petals n={12} />
+      <div className="panel rv obs">
+        {sent ? (
+          <div className="done">
+            <div className="seal2"><svg width="34" height="34" viewBox="0 0 34 34"><path d="M8 17.5l6.5 6.5L26 11" /></svg></div>
+            <h2>{sent.attend === 'yes' ? 'تم تأكيد حضورك' : 'وصلنا اعتذارك'}</h2>
+            <p>{sent.attend === 'yes'
+              ? 'شكرًا لك يا ' + sent.name + '، يسعدنا أن نراك بيننا.'
+              : 'شكرًا لك يا ' + sent.name + '، نقدّر ردّك ودعواتك لنا.'}</p>
+            <div className="note">{LIVE ? 'وصل ردّك إلى أصحاب الدعوة.' : 'نسخة تجريبية: يُحفظ الرد على هذا الجهاز فقط، ولا يُرسل إلى أحد.'}</div>
+            <button type="button" className="linkbtn" onClick={() => { setSent(null); }}>تعديل الرد</button>
+          </div>
+        ) : (
+          <form onSubmit={submit} noValidate>
+            <div className="hd"><div className="eyebrow rv obs">تأكيد الحضور</div><h2 className="rv obs">يسعدنا ردّكم</h2></div>
+            <div className="rv obs">
+              <input id="guest-name" className={'fld' + (err ? ' err' : '')} placeholder="الاسم الكريم" value={name} autoComplete="name"
+                     onChange={(e) => { setName(e.target.value); setErr(false); }} aria-invalid={err} />
+            </div>
+            {err && <div className="msg-e">فضلًا اكتب اسمك لنسجّل ردّك.</div>}
+            <div className="choices rv obs" role="radiogroup" aria-label="حالة الحضور">
+              <label className={'choice' + (attend === 'yes' ? ' on' : '')}>
+                <input type="radio" name="attend" id="att-yes" checked={attend === 'yes'} onChange={() => setAttend('yes')} />سأحضر
+              </label>
+              <label className={'choice' + (attend === 'no' ? ' on' : '')}>
+                <input type="radio" name="attend" id="att-no" checked={attend === 'no'} onChange={() => setAttend('no')} />أعتذر عن الحضور
+              </label>
+            </div>
+            <div className="rv obs"><textarea id="guest-msg" className="fld" placeholder="رسالة تهنئة (اختياري)" value={msg} onChange={(e) => setMsg(e.target.value)} /></div>
+            <div className="rv obs" style={{ display: 'flex', justifyContent: 'center' }}><button className="btn" id="rsvp-submit" type="submit" disabled={busy}>{busy ? 'جارٍ الإرسال…' : 'تأكيد الحضور'}</button></div>
+            {fail && <div className="msg-e">تعذّر الإرسال. تأكد من اتصالك بالإنترنت وحاول مرة أخرى.</div>}
+            {!LIVE && <div className="note rv obs">نسخة تجريبية: يُحفظ الرد على هذا الجهاز فقط.</div>}
+          </form>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* سطران متناسقان بتوسيط هادئ */
+function FitLines({ lines }) {
+  return (
+    <div className="q obs soft">
+      {lines.map((t, i) => <div key={i} className="ln" style={{ '--d': (0.6 + i * 0.9) + 's' }}>{t}</div>)}
+    </div>
+  );
+}
+function Closing() {
+  return (
+    <section className="scene closing" id="closing">
+      <Bg src={A.sunset} flip />
+      <div className="veil2" />
+      <Petals n={16} />
+      <div className="col">
+        <div className="pearls rv obs"><i /><i /><i /></div>
+        <FitLines lines={CONFIG.closingLines} />
+        <div className="sign soft rv obs" data-d="2.2">عائلة {CONFIG.family}</div>
+      </div>
+      <div className="credit rv obs" data-d="3">
+        <span>تصميم وتنفيذ</span>
+        <img src="assets/studio.png" alt="Value Studio" />
+      </div>
+    </section>
+  );
+}
+
+function Dots({ active }) {
+  return (
+    <nav className="dots" aria-label="مراحل الدعوة">
+      {SECTIONS.map((s, i) => (
+        <button key={s.id} className={i === active ? 'on' : ''} aria-label={s.label} aria-current={i === active ? 'true' : undefined}
+                onClick={() => document.getElementById(s.id).scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })}>
+          <span />
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+function App() {
+  const [phase, setPhase] = useState('closed'); // closed → opening → leaving → done
+  const [active, setActive] = useState(0);
+  const open = () => {
+    setPhase('opening');
+    setTimeout(() => setPhase('leaving'), reduced ? 400 : 3400);
+    setTimeout(() => setPhase('done'), reduced ? 700 : 5200);
+  };
+  useEffect(() => {
+    document.documentElement.style.overflowY = phase === 'done' ? '' : 'hidden';
+    if (phase === 'done') window.scrollTo(0, 0);
+  }, [phase]);
+
+  useEffect(() => {
+    const els = document.querySelectorAll('.obs');
+    if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); return; }
+    /* العناصر التي تدخل الشاشة معًا تظهر تباعًا بحسب ترتيبها من الأعلى */
+    const io = new IntersectionObserver((es) => {
+      es.filter((e) => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left)
+        .forEach((e, i) => {
+          const extra = parseFloat(e.target.dataset.d || '0');
+          e.target.style.setProperty('--d', (reduced ? 0 : i * 0.55 + extra).toFixed(2) + 's');
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        });
+    }, { threshold: 0.2 });
+    els.forEach((e) => io.observe(e));
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      raf = 0;
+      const vh = window.innerHeight;
+      let cur = 0;
+      SECTIONS.forEach((s, i) => { const el = document.getElementById(s.id); if (el && el.getBoundingClientRect().top <= vh * 0.5) cur = i; });
+      setActive(cur);
+      if (reduced) return;
+      document.querySelectorAll('.scene > .bg').forEach((b) => {
+        const r = b.parentElement.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        const off = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / vh)) * r.height * -0.035;
+        b.style.transform = 'translate3d(0,' + off.toFixed(1) + 'px,0)';
+      });
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    window.addEventListener('scroll', on, { passive: true }); window.addEventListener('resize', on); tick();
+    return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); };
+  }, []);
+
+  const entered = phase === 'leaving' || phase === 'done';
+  return (
+    <div className={'app' + (entered ? ' go' : '')}>
+      {phase !== 'done' && <Intro phase={phase} onOpen={open} />}
+      <Hero />
+      <Countdown />
+      <Place />
+      <Rsvp />
+      <Closing />
+      {phase === 'done' && <Dots active={active} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+
+
+
+
+
