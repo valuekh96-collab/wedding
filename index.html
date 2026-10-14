@@ -220,7 +220,8 @@ textarea.fld{resize:none;min-height:5rem}
 .credit img{display:block;width:calc(var(--w)*.17);max-width:72px;height:auto;filter:drop-shadow(0 0 6px rgba(255,253,248,.9))}
 .sign{font-family:var(--f-names);font-weight:700;font-size:1.45rem;color:var(--gold-ink);margin-top:.8rem}
 /* سهم التمرير في الشاشة الأولى */
-.cue{position:fixed;left:0;right:0;margin:0 auto;width:max-content;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:65;display:flex;align-items:center;gap:.55rem;padding:.7rem 1.3rem .7rem 1.1rem;border-radius:999px;border:1px solid var(--gold);background:rgba(255,253,248,.94);color:var(--text);cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 8px 22px rgba(94,74,56,.28);animation:cueIn .9s 3.2s both,bob 1.8s 4.1s ease-in-out infinite,ring 2.4s 4.1s ease-out infinite}
+.cue{position:fixed;left:0;right:0;margin:0 auto;width:max-content;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:65;display:flex;align-items:center;gap:.55rem;padding:.7rem 1.3rem .7rem 1.1rem;border-radius:999px;border:1px solid var(--gold);background:rgba(255,253,248,.94);color:var(--text);cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 8px 22px rgba(94,74,56,.28);animation:cueIn .9s var(--cd,.7s) both,bob 1.8s calc(var(--cd,.7s) + .9s) ease-in-out infinite,ring 2.4s calc(var(--cd,.7s) + .9s) ease-out infinite}
+.cue.away{opacity:0!important;pointer-events:none}
 .cue span{font-family:var(--f-ui);font-size:1rem;font-weight:600}
 .cue svg{color:var(--gold-ink);flex:none}
 .cue:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
@@ -714,7 +715,8 @@ function Dots({ active }) {
 function App() {
   const [phase, setPhase] = useState('closed'); // closed → opening → leaving → done
   const [active, setActive] = useState(0);
-  const [atTop, setAtTop] = useState(true);
+  const [scrolling, setScrolling] = useState(false);
+  const [typing, setTyping] = useState(false);
   const [musicOn, setMusicOn] = useState(false);
   const toggleMusic = () => setMusicOn(Music.toggle());
   const open = () => {
@@ -751,9 +753,6 @@ function App() {
     const tick = () => {
       raf = 0;
       const vh = window.innerHeight;
-      let cur = 0;
-      SECTIONS.forEach((s, i) => { const el = document.getElementById(s.id); if (el && el.getBoundingClientRect().top <= vh * 0.5) cur = i; });
-      setActive(cur);
       if (reduced) return;
       document.querySelectorAll('.scene > .bg').forEach((b) => {
         const r = b.parentElement.getBoundingClientRect();
@@ -813,12 +812,33 @@ function App() {
     return stop;
   }, [phase]);
 
-  /* سهم «مرّر للأسفل» يختفي بمجرد أن يبدأ الضيف بالنزول */
+  /* الشاشة الحالية (للنقاط وزر «اسحب للأسفل»)، ويختفي الزر أثناء التمرير ويعود بعد ثوانٍ من التوقف */
   useEffect(() => {
-    const check = () => setAtTop(window.scrollY < 60);
-    check();
-    window.addEventListener('scroll', check, { passive: true });
-    return () => window.removeEventListener('scroll', check);
+    let timer = 0;
+    const current = () => {
+      const vh = window.innerHeight;
+      let cur = 0;
+      SECTIONS.forEach((s, k) => { const el = document.getElementById(s.id); if (el && el.getBoundingClientRect().top <= vh * 0.5) cur = k; });
+      setActive(cur);
+    };
+    const onScroll = () => {
+      current();
+      setScrolling(true);
+      clearTimeout(timer);
+      timer = setTimeout(() => setScrolling(false), 900);
+    };
+    const onIn = (e) => { if (e.target.closest && e.target.closest('input,textarea')) setTyping(true); };
+    const onOut = () => setTyping(false);
+    current();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('focusin', onIn);
+    document.addEventListener('focusout', onOut);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('focusin', onIn);
+      document.removeEventListener('focusout', onOut);
+    };
   }, []);
 
   const entered = phase === 'leaving' || phase === 'done';
@@ -831,9 +851,10 @@ function App() {
       <Rsvp />
       <Closing />
       {phase === 'done' && <Dots active={active} />}
-      {phase === 'done' && atTop && (
-        <button className="cue" id="scroll-cue" aria-label="مرّر للأسفل لعرض بقية الدعوة"
-                onClick={() => document.getElementById('countdown').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })}>
+      {phase === 'done' && active < SECTIONS.length - 1 && !typing && (
+        <button key={active} className={'cue' + (scrolling ? ' away' : '')} id="scroll-cue" style={{ '--cd': active === 0 ? '3.2s' : '.7s' }}
+                aria-label="اسحب للأسفل لعرض الشاشة التالية"
+                onClick={() => document.getElementById(SECTIONS[active + 1].id).scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })}>
           <span>اسحب للأسفل</span>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M6 8l6 6 6-6" /><path d="M6 14l6 6 6-6" opacity=".5" />
