@@ -215,12 +215,17 @@ textarea.fld{resize:none;min-height:5rem}
 .verse{display:block;width:78%;max-width:270px;height:auto;filter:drop-shadow(0 0 8px rgba(255,253,248,.9))}
 .hero .verse{width:58%;max-width:230px}
 .closing .verse{width:100%;max-width:290px}
-.credit{margin-top:auto;align-self:center;margin-bottom:1.6rem;display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.6rem 1.4rem;border-radius:18px;background:radial-gradient(ellipse at center,rgba(255,253,248,.85),rgba(255,253,248,0) 75%)}
-.credit span{font-family:var(--f-ui);font-size:.8rem;font-weight:500;color:var(--gold-ink)}
-.credit img{display:block;width:calc(var(--w)*.2);max-width:96px;height:auto}
+.credit{margin-top:auto;align-self:flex-end;margin-left:14px;margin-bottom:12px;display:flex;flex-direction:column;align-items:center;gap:.3rem;padding:.4rem .6rem}   /* flex-end في RTL = يسار */
+.credit span{font-family:var(--f-ui);font-size:.72rem;font-weight:500;color:var(--gold-ink);text-shadow:0 0 8px rgba(255,253,248,.95)}
+.credit img{display:block;width:calc(var(--w)*.17);max-width:72px;height:auto;filter:drop-shadow(0 0 6px rgba(255,253,248,.9))}
 .sign{font-family:var(--f-names);font-weight:700;font-size:1.45rem;color:var(--gold-ink);margin-top:.8rem}
+/* سهم التمرير في الشاشة الأولى */
+.cue{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));margin-left:-45px;width:90px;z-index:65;display:flex;flex-direction:column;align-items:center;gap:0;background:none;border:0;padding:6px 0 0;color:var(--gold-ink);cursor:pointer;animation:cueIn 1.2s 5s both,nudge 2.2s 6.2s ease-in-out infinite}
+.cue span{font-family:var(--f-ui);font-size:.78rem;font-weight:500;text-shadow:0 0 8px rgba(255,253,248,1),0 0 3px rgba(255,253,248,1)}
+.cue svg{filter:drop-shadow(0 0 5px rgba(255,253,248,1))}
+.cue:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:10px}
 /* زر النغمة */
-.music{position:fixed;bottom:18px;left:calc(50% - var(--w)/2 + 14px);z-index:70;width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);background:rgba(255,253,248,.88);color:var(--text);display:grid;place-items:center;cursor:pointer;padding:0;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 6px 16px rgba(94,74,56,.2);transition:transform .3s cubic-bezier(.2,.7,.2,1);animation:rise 1.2s .4s both}
+.music{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:calc(50% - var(--w)/2 + 14px);z-index:70;width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);background:rgba(255,253,248,.88);color:var(--text);display:grid;place-items:center;cursor:pointer;padding:0;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 6px 16px rgba(94,74,56,.2);transition:transform .3s cubic-bezier(.2,.7,.2,1);animation:rise 1.2s .4s both}
 .music:hover{transform:translateY(-2px)}
 .music:active{transform:scale(.93)}
 .music:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
@@ -267,7 +272,7 @@ const CONFIG = {
   address: 'المزة - مواساة - الطريق الواصل إلى أوتستراد المزة',   // يُخفى إن تُرك فارغًا
   mapsUrl: 'https://www.google.com/maps?q=33.50806427001953,36.261898040771484&z=17&hl=en',
   closingLines: ['بحضوركم يفيض الفرح في أرجائنا', 'وبطيب دعواتكم يزهر ميثاق عمرنا'],
-  musicFile: '',                    // اختياري: مسار ملف موسيقى خاص (مثل 'assets/music.mp3'). فارغ = نغمة مولَّدة داخل الصفحة
+  musicFile: 'assets/music.mp3',                    // اختياري: مسار ملف موسيقى خاص (مثل 'assets/music.mp3'). فارغ = نغمة مولَّدة داخل الصفحة
   storageKey: 'wedding-rsvp-demo',
   rsvpEndpoint: 'https://script.google.com/macros/s/AKfycbweCets309rdzkmhqG_EbIScHOFlbT6jiOrxkYxLHPdoxCU8VvFHDT0E6KDpIC3zac/exec'                  // رابط Google Apps Script (/exec) لإرسال الردود إلى تلغرام. فارغ = تجريبي محلي
 };
@@ -515,7 +520,7 @@ function Hero() {
           <span className="n a" style={{ '--d': '3.5s' }}>{CONFIG.bride}</span>
         </div>
       </div>
-      <span className="scroll" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8l6 6 6-6" /><path d="M6 14l6 6 6-6" opacity=".5" /></svg></span>
+      
     </section>
   );
 }
@@ -707,6 +712,7 @@ function Dots({ active }) {
 function App() {
   const [phase, setPhase] = useState('closed'); // closed → opening → leaving → done
   const [active, setActive] = useState(0);
+  const [atTop, setAtTop] = useState(true);
   const [musicOn, setMusicOn] = useState(false);
   const toggleMusic = () => setMusicOn(Music.toggle());
   const open = () => {
@@ -796,6 +802,14 @@ function App() {
     return stop;
   }, [phase]);
 
+  /* سهم «مرّر للأسفل» يختفي بمجرد أن يبدأ الضيف بالنزول */
+  useEffect(() => {
+    const check = () => setAtTop(window.scrollY < 60);
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    return () => window.removeEventListener('scroll', check);
+  }, []);
+
   const entered = phase === 'leaving' || phase === 'done';
   return (
     <div className={'app' + (entered ? ' go' : '')}>
@@ -806,6 +820,15 @@ function App() {
       <Rsvp />
       <Closing />
       {phase === 'done' && <Dots active={active} />}
+      {phase === 'done' && atTop && (
+        <button className="cue" id="scroll-cue" aria-label="مرّر للأسفل لعرض بقية الدعوة"
+                onClick={() => document.getElementById('countdown').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })}>
+          <span>مرّر للأسفل</span>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 7l6 6 6-6" /><path d="M6 13l6 6 6-6" opacity=".55" />
+          </svg>
+        </button>
+      )}
       {phase !== 'closed' && (
         <button className="music" id="music-toggle" onClick={toggleMusic} aria-label={musicOn ? 'كتم النغمة' : 'تشغيل النغمة'} aria-pressed={musicOn}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
